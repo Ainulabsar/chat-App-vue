@@ -85,9 +85,9 @@ export default {
           time: new Date().toLocaleTimeString(),
         });
       console.log(state.messages);
-      state.messages.sort(function times(a, b) {
-        a.time.localeCompare(b.time);
-      });
+      // state.messages.sort(function times(a, b) {
+      //   a.time.localeCompare(b.time);
+      // });
       console.log(state.messages);
       inputMessage.value = "";
       console.log(state.messages);
