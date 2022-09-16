@@ -1,267 +1,53 @@
-<!-- eslint-disable no-unused-vars -->
-<!-- eslint-disable no-unused-vars -->
-<!-- <template>
+<template>
   <div class="login" v-if="state.username === '' || state.username === null">
-    <form class="login-form" @submit="login">
-      <div class="login-inner">
-        <h1>Welcome to firechats</h1>
-        <label for="userName">Username:</label>
+    <form class="login-form" @submit.prevent="Login">
+      <div class="login-inner {">
+        <h1>Login to FireChat</h1>
+        <label for="username">Username</label>
         <input
           type="text"
+          class="txt"
           v-model="inputUsername"
-          placeholder="Please Enter your Username"
+          placeholder="Please enter your username..."
         />
-        <input type="submit" value="Login" />
+        <input type="submit" class="lgn" value="Login" />
       </div>
     </form>
   </div>
   <div class="chat" v-else>
-    <header>
-      <button class="logout">Logout</button>
-      <h1>Welcome, {{ state.username }}</h1>
-    </header>
-    <section class="chatboox">
-      <div
-        v-for="message in state.messages"
-        :key="message.key"
-        :class="message.username == state.username ? 'message current-user' : 'message'"
-      >
-        <div class="message-inner">
-          <div class="username">{{ message.username }}</div>
-          <div class="content">{{ message.content }}</div>
-        </div>
-      </div>
-
-      <span>{{ inputMessage }}</span>
-    </section>
-    <footer>
-      <form @submit.prevent="SendMessage()">
-        <input
-          class="footer"
-          type="text"
-          v-model="inputMessage"
-          placeholder="Write a Message......"
-        />
-        <input class="footerbtn" type="submit" value="send" />
-      </form>
-    </footer>
-  </div>
-</template>
-<script>
-import { getDatabase, set } from "firebase/database";
-import { reactive, ref } from "vue";
-// import { database } from "./database";
-
-import { firebase } from "./db.js";
-
-export default {
-  setup() {
-    const inputUsername = ref("");
-    const inputMessage = ref("");
-    const state = reactive({
-      username: "",
-      messages: [],
-    });
-    const login = () => {
-      if (inputUsername.value != "" || inputUsername.value != null) {
-        state.username = inputUsername.value;
-        inputUsername.value = "";
-      }
-    };
-    const Logout = () => {
-      state.username = "";
-    };
-    const SendMessage = () => {
-      firebase.intializeApp();
-      const db = getDatabase();
-      console.log(db);
-      set(ref(db, "message"), {
-        username: state.username,
-        content: inputMessage.value,
-      });
-      inputMessage.value = "";
-    };
-    // const SendMessage = () => {
-    //   const database = getDatabase()
-    //   console.log(database)
-    //   const messagesRef = db.database.ref("messages");
-    //   if (inputMessage.value === "" || inputMessage.value === null) {
-    //     return;
-    //   }
-    //   const message = {
-    //     username: "state.username",
-    //     content: "inputMessage.value"
-    //   }
-    //   messagesRef.value.push(message);
-    //   inputMessage.value = "";
-    // }
-    // onMounted(() => {
-    //   const messagesRef = db.database().ref("messages");
-    //   messagesRef.on('value', snapshot => {
-    //     const data = snapshot.val();
-    //     let messages = [];
-    //     Object.keys(data).forEach(key => {
-    //       messages.push({
-    //         id: key,
-    //         username: data[key].username,
-    //         content: data[key].content
-    //       });
-    //     });
-    //     state.messages = messages;
-    //   });
-    // });
-    return {
-      inputUsername,
-      login,
-      state,
-      inputMessage,
-      SendMessage,
-      Logout,
-    };
-  },
-};
-</script> -->
-<!-- <template>
-  <div class="view login" v-if="state.username === '' || state.username === null">
-    <form class="login-form" @submit.prevent="Login">
-      <div class="form-inner">
-        <h1>Login to FireChat</h1>
-        <label for="username">Username</label>
-        <input
-          type="text"
-          v-model="inputUsername"
-          placeholder="Please enter your username..."
-        />
-        <input type="submit" value="Login" />
-      </div>
-    </form>
-  </div>
-
-  <div class="view chat" v-else>
-    <header>
+    <div class="header">
       <button class="logout" @click="Logout">Logout</button>
-      <h1>Welcome, {{ state.username }}</h1>
-    </header>
+      <h2>Welcome, {{ state.username }}</h2>
+    </div>
 
-    <section class="chat-box">
+    <div class="chat-box">
       <div
+        class="msgs"
         v-for="messages in state.messages"
         :key="messages.key"
-        :class="messages.username == state.username ? 'message current-user' : 'message'"
+        :class="
+          messages.username == state.username ? 'messages current-user' : 'messages'
+        "
       >
         <div class="message-inner">
           <div class="username">{{ messages.username }}</div>
           <div class="content">{{ messages.content }}</div>
+          <div class="time">{{ messages.time }}</div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <footer>
-      <form @submit.prevent="SendMessage()">
-        <input type="text" v-model="inputMessage" placeholder="Write a message..." />
-        <input type="submit" value="Send" />
-      </form>
-    </footer>
-  </div>
-</template>
-
-<script>
-import { onMounted, reactive, ref as vueref } from "vue";
-import { set, onValue, ref } from "firebase/database";
-import { database } from "./db";
-export default {
-  setup() {
-    const inputUsername = vueref("");
-    const inputMessage = vueref("");
-    // const updatemessages = vueref("");
-
-    const state = reactive({
-      username: "",
-      messages: [],
-    });
-    const Login = () => {
-      if (inputUsername.value != "" || inputUsername.value != null) {
-        state.username = inputUsername.value;
-        inputUsername.value = "";
-      }
-    };
-    const Logout = () => {
-      state.username = "";
-    };
-    const SendMessage = () => {
-      if (inputMessage.value === "" || inputMessage.value === null) {
-        return;
-      }
-      set(ref(database, "/messages"), {
-        username: state.username,
-        content: inputMessage.value,
-      });
-
-      inputMessage.value = "";
-    };
-    onMounted(() => {
-      const messagesRef = ref(database, "/messages");
-      // console.log(database);
-      onValue(messagesRef, (snapshot) => {
-        const data = snapshot.val();
-        let messages = [];
-        Object.keys(data).forEach((key) => {
-          messages.push({
-            id: key,
-            username: data[key].username,
-            content: data[key].content,
-          });
-        });
-        console.log(state.messages);
-        // updatemessages(messages, data);
-      });
-    });
-    return {
-      inputUsername,
-      Login,
-      state,
-      inputMessage,
-      SendMessage,
-      Logout,
-      // updatemessages,
-    };
-  },
-};
-</script> -->
-<template>
-  <div class="view login" v-if="state.username === '' || state.username === null">
-    <form class="login-form" @submit.prevent="Login">
-      <div class="form-inner">
-        <h1>Login to FireChat</h1>
-        <label for="username">Username</label>
+    <div class="footer">
+      <form @submit.prevent="SendMessage">
         <input
+          class="inputMsg"
           type="text"
-          v-model="inputUsername"
-          placeholder="Please enter your username..."
+          v-model="inputMessage"
+          placeholder="Write a message..."
         />
-        <input type="submit" value="Login" />
-      </div>
-    </form>
-  </div>
-
-  <div class="view chat" v-else>
-    <header>
-      <button class="logout" @click="Logout">Logout</button>
-      <h1>Welcome, {{ state.username }}</h1>
-    </header>
-
-    <section>
-      <div v-for="messages in state.messages" :key="messages.key">
-        {{ messages.username }} : {{ messages.content }}
-      </div>
-    </section>
-
-    <footer>
-      <form @submit.prevent="SendMessage()">
-        <input type="text" v-model="inputMessage" placeholder="Write a message..." />
-        <input type="submit" value="Send" />
+        <input class="send" type="submit" value="Send" />
       </form>
-    </footer>
+    </div>
   </div>
 </template>
 
@@ -269,12 +55,11 @@ export default {
 import { onMounted, reactive, ref as vueref } from "vue";
 import { set, onValue, ref } from "firebase/database";
 import { database } from "./db";
+
 export default {
   setup() {
     const inputUsername = vueref("");
     const inputMessage = vueref("");
-    // const updatemessages = vueref("");
-    // let username = vueref("");
     const state = reactive({
       username: "",
       messages: [],
@@ -288,29 +73,34 @@ export default {
       state.username = "";
     };
     const SendMessage = () => {
-      // console.log(inputMessage.value);
       if (inputMessage.value === "" || inputMessage.value === null) {
         return;
       }
-      let id = Math.random();
-      id = id.toString().split("").splice(2, 6).join("");
-      console.log(id);
-      set(ref(database, `messages/` + id), {
-        username: state.username,
-        content: inputMessage.value,
-      });
 
+      let id = Math.random();
+      (id = id.toString().split("").splice(2, 6).join("")),
+        set(ref(database, `messages/` + id), {
+          username: state.username,
+          content: inputMessage.value,
+          time: new Date().toLocaleTimeString(),
+        });
+      console.log(state.messages);
+      state.messages.sort(function times(a, b) {
+        a.time.localeCompare(b.time);
+      });
+      console.log(state.messages);
       inputMessage.value = "";
+      console.log(state.messages);
     };
+
     onMounted(() => {
       const messagesRef = ref(database, "messages/");
-      // console.log(database);
       onValue(messagesRef, (snapshot) => {
         const data = snapshot.val();
-
         state.messages = data;
       });
     });
+
     return {
       inputUsername,
       Login,
@@ -318,25 +108,124 @@ export default {
       inputMessage,
       SendMessage,
       Logout,
-      // updatemessages,
     };
   },
 };
 </script>
 <style>
 * {
-  margin: 0%;
-  padding: 0%;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
 .logout {
-  float: right;
+  position: static;
+  width: 10%;
+  height: 5vh;
+  top: 15px;
+  right: 15px;
+  flex-wrap: wrap;
+  color: black;
+  border-radius: 5px;
+  font-size: 18px;
+  margin-bottom: 10px;
+  border: none;
+  text-align: center;
 }
 section {
+  height: 50%;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
+  flex-wrap: wrap;
+}
+.content {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #f3f3f3;
+  border-radius: 999px;
+  color: #333;
+  font-size: 18px;
+  line-height: 1.2em;
+  text-align: left;
+}
+.time {
+  display: flex;
+  font-size: 10px;
+  float: left;
+  justify-content: center;
+  align-items: flex-end;
+}
+.msgs.messages.current-user {
+  text-align: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+.msgs.messages.current-user .message-inner {
+  max-width: 85%;
+  color: #ed4545;
+}
+
+.msgs.messages.current-user .content {
+  color: #fff;
+  font-weight: 600;
+  background-color: #ea526f;
+}
+
+.username {
+  color: #888;
+  font-size: 16px;
+  float: left;
+  margin-bottom: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.message-inner {
+  display: flex;
+  margin-bottom: 15px;
+  max-width: 75%;
+}
+.lgn {
+  appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #ea526f;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+.chat-box {
+  border-radius: 24px 24px 0px 0px;
+  background-color: #fff;
+  box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+  flex: 1 1 100%;
+  padding: 30px;
+}
+.txt {
+  appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+
+  color: #333;
+  font-size: 18px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+  background-color: #f3f3f3;
+  transition: 0.4s;
 }
 .login {
   width: 100vw;
@@ -345,7 +234,6 @@ section {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-
   align-items: center;
 }
 
@@ -354,18 +242,19 @@ section {
   flex-direction: column;
   justify-content: center;
   flex-wrap: wrap;
-
   align-items: center;
   padding-bottom: 10px;
 }
-
 .login-inner {
   width: 50vw;
-  height: 25vh;
+  height: 100%;
   padding-bottom: 20px;
-  background-color: antiquewhite;
+  background-color: rgb(248, 212, 13);
   flex-wrap: wrap;
-
+  display: block;
+  padding: 50px 15px;
+  border-radius: 16px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -374,56 +263,78 @@ section {
 }
 
 .chat {
-  width: 100vw;
-  height: 100vh;
-  background-color: rgb(226, 239, 237);
   display: flex;
-  flex-wrap: wrap;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10pxa;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #ea526f;
 }
 
-header {
-  width: 100vw;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+.header {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 10px 30px 10px;
 }
 
 button.logout {
   float: right;
 }
-
-section {
-  width: 100vw;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-}
-
-footer {
-  width: 100vw;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: center;
-}
-
 .footer {
-  width: 85vw;
-  height: 5vh;
+  width: 100vw;
+  position: sticky;
+  bottom: 0px;
+  background-color: #fff;
+  padding: 30px;
+  box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
 }
-
-.footerbtn {
-  width: 10vw;
-  height: 5vh;
-  background-color: rgb(148, 245, 148);
+form {
+  display: flex;
+}
+h1 {
+  color: rgb(33, 33, 33);
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+h2 {
+  color: rgb(249, 243, 243);
+  font-size: 28px;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: rgb(33, 33, 33);
+  font-size: 16px;
+  transition: 0.4s;
+}
+.inputMsg {
+  flex: 1 1 100%;
+  appearance: none;
   border: none;
+  outline: none;
+  background: none;
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 8px 0px 0px 8px;
+
+  color: #333;
+  font-size: 18px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+  background-color: #f3f3f3;
+  transition: 0.4s;
+}
+.send {
+  appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 0px 8px 8px 0px;
+  background-color: #ea526f;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
 }
 </style>
