@@ -94,12 +94,12 @@ export default {
       onValue(messagesRef, (snapshot) => {
         const data = snapshot.val();
         state.messages = data;
-        const stmsg = Object.values(state.messages);
-        stmsg.sort((a, b) => b.time - a.time);
+        let stmsg = Object.values(state.messages);
+        stmsg.sort((a, b) => a.timestamp - b.timestamp);
         console.log(stmsg);
+        state.messages = stmsg;
       });
     });
-
     return {
       inputUsername,
       Login,
