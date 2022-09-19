@@ -78,19 +78,15 @@ export default {
       }
 
       let id = Math.random();
-      (id = id.toString().split("").splice(2, 6).join("")),
-        set(ref(database, `messages/` + id), {
-          username: state.username,
-          content: inputMessage.value,
-          time: new Date().toLocaleTimeString(),
-        });
-      console.log(state.messages);
-      // state.messages.sort(function times(a, b) {
-      //   a.time.localeCompare(b.time);
-      // });
-      console.log(state.messages);
+      id = id.toString().split("").splice(2, 6).join("");
+      set(ref(database, `messages/` + id), {
+        username: state.username,
+        content: inputMessage.value,
+        time: new Date().toLocaleTimeString(),
+        timestamp: Date.now(),
+      });
+
       inputMessage.value = "";
-      console.log(state.messages);
     };
 
     onMounted(() => {
@@ -98,6 +94,9 @@ export default {
       onValue(messagesRef, (snapshot) => {
         const data = snapshot.val();
         state.messages = data;
+        const stmsg = Object.values(state.messages);
+        stmsg.sort((a, b) => b.time - a.time);
+        console.log(stmsg);
       });
     });
 
@@ -125,7 +124,6 @@ export default {
   height: 5vh;
   top: 15px;
   right: 15px;
-  flex-wrap: wrap;
   color: black;
   border-radius: 5px;
   font-size: 18px;
@@ -230,7 +228,6 @@ section {
 .login {
   width: 100vw;
   height: 100vh;
-  background-color: rgb(213, 250, 176);
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
