@@ -126,6 +126,8 @@ export default {
   border-radius: 5px;
   font-size: 18px;
   margin-bottom: 10px;
+  background-color: #f1e1e4;
+  padding: 5px 5px;
   border: none;
   text-align: center;
 }
